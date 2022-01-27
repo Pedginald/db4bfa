@@ -52,6 +52,21 @@ router.get("/", async (req, res, next) => {
       const convoJSON = convo.toJSON();
       convoJSON.messages = convoJSON.messages.reverse();
 
+      // find amount of unread messages for each conversation
+      const unreadMessageCount = await Message.findAll({
+        where: {
+          conversationId: convoJSON.id,
+          read: false,
+          senderId: {
+            [Op.not]: userId,
+          }
+        }
+      }).then((messages) => {
+        return messages.length;
+      });
+
+      convoJSON.newNotifications = unreadMessageCount;
+
       // set a property "otherUser" so that frontend will have easier access
       if (convoJSON.user1) {
         convoJSON.otherUser = convoJSON.user1;
@@ -74,6 +89,8 @@ router.get("/", async (req, res, next) => {
       convoJSON.latestMessageText = convoJSON.messages[latestMessageIndex].text;
       conversations[i] = convoJSON;
     }
+
+    console.log(conversations);
 
     res.json(conversations);
   } catch (error) {
