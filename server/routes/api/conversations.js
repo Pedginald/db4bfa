@@ -53,7 +53,7 @@ router.get("/", async (req, res, next) => {
       convoJSON.messages = convoJSON.messages.reverse();
 
       // find amount of unread messages for each conversation
-      const unreadMessageCount = await Message.findAll({
+      const unreadMessageCount = await Message.count({
         where: {
           conversationId: convoJSON.id,
           read: false,
@@ -61,8 +61,6 @@ router.get("/", async (req, res, next) => {
             [Op.not]: userId,
           }
         }
-      }).then((messages) => {
-        return messages.length;
       });
 
       convoJSON.newNotifications = unreadMessageCount;
