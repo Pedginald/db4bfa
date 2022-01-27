@@ -85,6 +85,8 @@ router.get("/", async (req, res, next) => {
       const latestMessageIndex = convoJSON.messages.length - 1;
       convoJSON.updatedAt = convoJSON.messages[latestMessageIndex].createdAt;
       convoJSON.latestMessageText = convoJSON.messages[latestMessageIndex].text;
+      const lastReadMessageIndex = latestMessageIndex - unreadMessageCount;
+      convoJSON.lastReadMessageId = convoJSON.messages[lastReadMessageIndex].id;
       conversations[i] = convoJSON;
     }
 
