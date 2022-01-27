@@ -65,6 +65,17 @@ router.get("/", async (req, res, next) => {
 
       convoJSON.newNotifications = unreadMessageCount;
 
+      // find last read message of other user
+      const lastReadMessageId = await Message.max("id", {
+        where: {
+          conversationId: convoJSON.id,
+          read: true,
+          senderId: userId,
+        }
+      });
+
+      convoJSON.lastReadMessageId = lastReadMessageId;
+
       // set a property "otherUser" so that frontend will have easier access
       if (convoJSON.user1) {
         convoJSON.otherUser = convoJSON.user1;
@@ -85,8 +96,6 @@ router.get("/", async (req, res, next) => {
       const latestMessageIndex = convoJSON.messages.length - 1;
       convoJSON.updatedAt = convoJSON.messages[latestMessageIndex].createdAt;
       convoJSON.latestMessageText = convoJSON.messages[latestMessageIndex].text;
-      const lastReadMessageIndex = latestMessageIndex - unreadMessageCount;
-      convoJSON.lastReadMessageId = convoJSON.messages[lastReadMessageIndex].id;
       conversations[i] = convoJSON;
     }
 
@@ -98,8 +107,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// Update read status of all unread messages in a conversation
-
+// update read status of all unread messages in a conversation
 router.put("/", async (req, res, next) => {
   try {
     if (!req.user) {
