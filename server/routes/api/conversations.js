@@ -107,17 +107,17 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// update read status of all unread messages in a conversation
-router.put("/", async (req, res, next) => {
+// update read status of all receieved messages in a conversation
+router.put("/read", async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
     }
     const userId = req.user.id;
     const { conversationId } = req.body;
-    await Message.update({
-      read: true,
-      where: {
+    await Message.update(
+      { read: true },
+      { where: {
         conversationId,
         read: false,
         senderId: {
