@@ -8,6 +8,7 @@ export const addMessageToStore = (state, payload) => {
       messages: [message],
     };
     newConvo.latestMessageText = message.text;
+    newConvo.newNotifications++;
     return [newConvo, ...state];
   }
 
@@ -16,6 +17,9 @@ export const addMessageToStore = (state, payload) => {
       const convoCopy = { ...convo };
       convoCopy.messages = [ ...convoCopy.messages, message ]
       convoCopy.latestMessageText = message.text;
+      if (message.senderId === convoCopy.otherUser.id) {
+        convoCopy.newNotifications++;
+      }
       return convoCopy;
     } else {
       return convo;
@@ -74,6 +78,40 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       convoCopy.id = message.conversationId;
       convoCopy.messages = [ ...convoCopy.messages, message ]
       convoCopy.latestMessageText = message.text;
+      return convoCopy;
+    } else {
+      return convo;
+    }
+  });
+};
+
+// update read status of messages in store from server response
+export const updateReadStatusInStore = (state, conversationId, updatedMessages, userId) => {
+  return state.map((convo) => {
+
+    if (convo.id === conversationId) {
+      const convoCopy = { ...convo };
+      let updatedMessageIndex = updatedMessages.length - 1;
+      let messageIndex = convoCopy.messages.length - 1;
+
+      if (userId) {
+        convoCopy.lastReadMessageId = updatedMessages[updatedMessageIndex].id;
+      }
+
+      while (updatedMessageIndex >= 0) {
+        if (convoCopy.messages[messageIndex].id === updatedMessages[updatedMessageIndex].id) {
+          convoCopy.messages[messageIndex].read = true;
+          
+          if (convoCopy.messages[messageIndex].senderId === convoCopy.otherUser.id) {
+            convoCopy.newNotifications--;
+          }
+
+          updatedMessageIndex--;
+        }
+
+        messageIndex--;
+      }
+      
       return convoCopy;
     } else {
       return convo;
