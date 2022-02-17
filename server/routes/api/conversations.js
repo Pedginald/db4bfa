@@ -99,8 +99,6 @@ router.get("/", async (req, res, next) => {
       conversations[i] = convoJSON;
     }
 
-    console.log(conversations);
-
     res.json(conversations);
   } catch (error) {
     next(error);
@@ -113,9 +111,8 @@ router.put("/read", async (req, res, next) => {
     if (!req.user) {
       return res.sendStatus(401);
     }
-    const userId = req.user.id;
-    const { conversationId } = req.body;
-    await Message.update(
+    const { conversationId, userId } = req.body;
+    const updatedMessages = await Message.update(
       { read: true },
       { where: {
         conversationId,
@@ -123,9 +120,11 @@ router.put("/read", async (req, res, next) => {
         senderId: {
           [Op.not]: userId,
         }
-      }
+      },
+      returning: true
     });
-    return res.sendStatus(200);
+
+    res.json(updatedMessages[1]);
   } catch (error) {
     next(error);
   }
