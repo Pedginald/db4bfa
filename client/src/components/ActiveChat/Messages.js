@@ -1,10 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { setReadMessages } from "../../store/utils/thunkCreators";
 import { Box } from "@material-ui/core";
 import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import moment from "moment";
 
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
+  const { conversationId, messages, otherUser, userId, setReadMessages } = props;
+
+  useEffect(() => {
+    const reqBody = {
+      conversationId,
+      userId
+    };
+    setReadMessages(reqBody);
+  }, [conversationId, setReadMessages, userId, messages]);
 
   return (
     <Box>
@@ -21,4 +31,13 @@ const Messages = (props) => {
   );
 };
 
-export default Messages;
+// dispatch action to update message read status to props
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setReadMessages: (body) => {
+      dispatch(setReadMessages(body));
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Messages);
