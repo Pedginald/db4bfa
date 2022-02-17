@@ -9,11 +9,13 @@ const Messages = (props) => {
   const { conversationId, messages, otherUser, userId, setReadMessages } = props;
 
   useEffect(() => {
-    const reqBody = {
-      conversationId,
-      userId
-    };
-    setReadMessages(reqBody);
+    if (conversationId) {
+      const reqBody = {
+        conversationId,
+        userId
+      }
+      setReadMessages(reqBody);
+    }
   }, [conversationId, setReadMessages, userId, messages]);
 
   return (
