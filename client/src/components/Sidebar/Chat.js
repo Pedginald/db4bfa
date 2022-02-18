@@ -2,6 +2,7 @@ import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
+import { Badge } from "@material-ui/core";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
 
@@ -16,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       cursor: "grab"
     }
+  },
+  notificationBadge: {
+    marginRight: 30
   }
 }));
 
@@ -37,6 +41,12 @@ const Chat = (props) => {
         sidebar={true}
       />
       <ChatContent conversation={conversation} />
+      <Badge 
+        badgeContent={conversation.newNotifications} 
+        color={"primary"}
+        className={classes.notificationBadge}
+      >
+      </Badge>
     </Box>
   );
 };
