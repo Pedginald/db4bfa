@@ -94,24 +94,19 @@ export const updateReadStatusInStore = (state, conversationId, updatedMessages, 
       let updatedMessageIndex = updatedMessages.length - 1;
       let messageIndex = convoCopy.messages.length - 1;
 
-      if (userId) {
-        convoCopy.lastReadMessageId = updatedMessages[updatedMessageIndex].id;
-      }
+      userId && (convoCopy.lastReadMessageId = updatedMessages[updatedMessageIndex].id);
 
       while (updatedMessageIndex >= 0) {
         if (convoCopy.messages[messageIndex].id === updatedMessages[updatedMessageIndex].id) {
           convoCopy.messages[messageIndex].read = true;
           
-          if (convoCopy.messages[messageIndex].senderId === convoCopy.otherUser.id) {
+          convoCopy.messages[messageIndex].senderId === convoCopy.otherUser.id && 
             convoCopy.newNotifications--;
-          }
 
           updatedMessageIndex--;
         }
-
         messageIndex--;
       }
-      
       return convoCopy;
     } else {
       return convo;
