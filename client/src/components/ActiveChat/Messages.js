@@ -6,7 +6,14 @@ import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import moment from "moment";
 
 const Messages = (props) => {
-  const { conversationId, messages, otherUser, userId, setReadMessages } = props;
+  const { 
+    conversationId, 
+    messages, 
+    otherUser, 
+    userId, 
+    setReadMessages, 
+    lastReadMessageId 
+  } = props;
 
   useEffect(() => {
     if (conversationId) {
