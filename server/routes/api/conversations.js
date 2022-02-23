@@ -139,6 +139,10 @@ router.put("/read", async (req, res, next) => {
       returning: true
     });
 
+    if (!updatedMessages) {
+      return res.sendStatus(404);
+    }
+
     res.json(updatedMessages[1]);
   } catch (error) {
     next(error);
