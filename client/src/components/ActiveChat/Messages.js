@@ -46,7 +46,6 @@ const Messages = (props) => {
   );
 };
 
-// dispatch action to update message read status to props
 const mapDispatchToProps = (dispatch) => {
   return {
     setReadMessages: (body) => {

@@ -85,7 +85,6 @@ export const addNewConvoToStore = (state, recipientId, message) => {
   });
 };
 
-// update read status of messages in store from server response
 export const updateReadStatusInStore = (state, conversationId, updatedMessages, userId) => {
   return state.map((convo) => {
 
