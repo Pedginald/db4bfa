@@ -112,6 +112,21 @@ router.put("/read", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const { conversationId, userId } = req.body;
+
+    // return early if user is not part of conversation
+    const conversation = await Conversation.findByPk(conversationId, {
+      where: {
+        [Op.or]: {
+          user1Id: userId,
+          user2Id: userId
+        }
+      }
+    });
+
+    if (!conversation) {
+      return res.sendStatus(404);
+    }
+
     const updatedMessages = await Message.update(
       { read: true },
       { where: {
