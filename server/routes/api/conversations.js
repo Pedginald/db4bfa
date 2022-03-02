@@ -11,40 +11,29 @@ router.get("/", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const userId = req.user.id;
+
+    // get all conversations for user via through table
     const conversations = await Conversation.findAll({
-      where: {
-        [Op.or]: {
-          user1Id: userId,
-          user2Id: userId,
-        },
+      through: {
+        attributes: [],
+        where: {
+          userId
+        }
       },
-      attributes: ["id"],
+      attributes: ["id", "creatorId", "title"],
       order: [[Message, "createdAt", "DESC"]],
       include: [
         { model: Message },
         {
           model: User,
-          as: "user1",
+          attributes: ["id", "username", "photoUrl"],
           where: {
             id: {
-              [Op.not]: userId,
-            },
-          },
-          attributes: ["id", "username", "photoUrl"],
-          required: false,
-        },
-        {
-          model: User,
-          as: "user2",
-          where: {
-            id: {
-              [Op.not]: userId,
-            },
-          },
-          attributes: ["id", "username", "photoUrl"],
-          required: false,
-        },
-      ],
+              [Op.not]: userId
+            }
+          }
+        }
+      ]
     });
 
     for (let i = 0; i < conversations.length; i++) {
@@ -115,10 +104,10 @@ router.put("/read", async (req, res, next) => {
 
     // return early if user is not part of conversation
     const conversation = await Conversation.findByPk(conversationId, {
-      where: {
-        [Op.or]: {
-          user1Id: userId,
-          user2Id: userId
+      through: {
+        attributes: [],
+        where: {
+          userId
         }
       }
     });
